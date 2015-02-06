@@ -1,6 +1,6 @@
 {
   "name": "backbone.storage",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A simple storage class for Backbone Models and Collections.",
   "main": "dist/backbone.storage.js",
   "scripts": {
