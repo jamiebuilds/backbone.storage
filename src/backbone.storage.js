@@ -64,11 +64,13 @@ var Storage = Backbone.Storage = Metal.Class.extend({
    * @method find
    * @memberOf Storage
    * @param {Number|String|Object|Backbone.Model} model - The model to find.
+   * @param {Boolean} forceFetch - Force fetch model from server.
    * @returns {Promise} - A promise that will resolve to the model.
    */
-  find(model) {
+  find(model, forceFetch = false) {
     let record = this.records.get(model);
-    if (record) {
+
+    if (record && !forceFetch) {
       return Promise.resolve(record);
     } else {
       model = this._ensureModel(model);
@@ -86,13 +88,16 @@ var Storage = Backbone.Storage = Metal.Class.extend({
    * @instance
    * @method findAll
    * @memberOf Storage
+   * @param {Object} options - Options to pass to collection fetch. Also allows
+   * setting parameters on collection.
+   * @param {Boolean} forceFetch - Force fetch model from server.
    * @returns {Promise} - A promise that will resolve to the entire collection.
    */
-  findAll() {
-    if (this._hasSynced) {
+  findAll(options = {}, forceFetch = false) {
+    if (this._hasSynced && !forceFetch) {
       return Promise.resolve(this.records);
     } else {
-      return Promise.resolve(this.records.fetch()).then(() => {
+      return Promise.resolve(this.records.fetch(options)).then(() => {
         return this.records;
       });
     }
@@ -130,7 +135,7 @@ var Storage = Backbone.Storage = Metal.Class.extend({
    * @returns {Promise} - A promise that will resolve to the added model.
    */
   insert(model) {
-    model = this.records.add(model);
+    model = this.records.add(model, { merge: true });
     return Promise.resolve(model);
   },
 
