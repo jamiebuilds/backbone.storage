@@ -40,6 +40,10 @@ bookStore.find(1).then(model => {
   model.get('name'); // >> A Tale of Two Cities
 });
 ```
+You can optionally pass a boolean forceFetch to ensure a call is made to the backend. Default is false.
+```js
+bookStore.find(1, true);
+```
 
 ### `findAll`
 
@@ -51,6 +55,19 @@ collection has not previously been synced it will call the collection's
 bookStore.findAll().then(collection => {
   collection.length; // >> 10
 });
+```
+
+Allows a object 'options' that will get passed to the collection fetch call.
+```js
+bookStore.findAll({
+  data: { sortBy: 'name' }
+}).then(collection => {
+  collection.length; // >> 10
+});
+```
+You can optionally pass a boolean forceFetch to ensure a call is made to the backend. Default is false.
+```js
+bookStore.findAll({}, true);
 ```
 
 ### `save`

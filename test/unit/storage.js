@@ -21,6 +21,15 @@ describe('Storage', function() {
       });
     });
 
+    it('should call fetch when forceFetch is true', function() {
+      var self = this;
+      return this.storage.find(2).then(function() {
+        return self.storage.find(2, true);
+      }).then(function() {
+        expect(Backbone.Model.prototype.fetch).to.have.been.calledTwice;
+      });
+    });
+
     describe('by id', function() {
       it('should return the record if it exists', function() {
         var self = this;
@@ -105,12 +114,35 @@ describe('Storage', function() {
       });
     });
 
+    it('should call fetch when forceFetch is true', function() {
+      var self = this;
+      return this.storage.findAll().then(function() {
+        return self.storage.findAll({}, true);
+      }).then(function() {
+        expect(Backbone.Collection.prototype.fetch).to.have.been.calledTwice;
+      });
+    });
+
     it('should fetch the collection if it has not been fetched', function() {
       var self = this;
       return this.storage.findAll().then(function(collection) {
         expect(collection.length).to.equal(2);
         expect(collection).to.equal(self.storage.records);
         expect(Backbone.Collection.prototype.fetch).to.have.been.called;
+      });
+    });
+
+    it('should add data parameters on collection url if set in findAll', function() {
+      return this.storage.findAll({
+        data: {
+          sortBy: 'name'
+        }
+      }).then(function() {
+        expect(Backbone.Collection.prototype.fetch).to.have.been.calledWith({
+          data: {
+            sortBy: 'name'
+          }
+        });
       });
     });
   });
