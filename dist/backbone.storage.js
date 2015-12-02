@@ -39,12 +39,15 @@
      * @method find
      * @memberOf Storage
      * @param {Number|String|Object|Backbone.Model} model - The model to find.
+     * @param {Boolean} forceFetch - Force fetch model from server.
      * @returns {Promise} - A promise that will resolve to the model.
      */
     find: function find(model) {
       var _this = this;
+      var forceFetch = arguments[1] === undefined ? false : arguments[1];
       var record = this.records.get(model);
-      if (record) {
+
+      if (record && !forceFetch) {
         return Promise.resolve(record);
       } else {
         model = this._ensureModel(model);
@@ -62,14 +65,19 @@
      * @instance
      * @method findAll
      * @memberOf Storage
+     * @param {Object} options - Options to pass to collection fetch. Also allows
+     * setting parameters on collection.
+     * @param {Boolean} forceFetch - Force fetch model from server.
      * @returns {Promise} - A promise that will resolve to the entire collection.
      */
     findAll: function findAll() {
       var _this = this;
-      if (this._hasSynced) {
+      var options = arguments[0] === undefined ? {} : arguments[0];
+      var forceFetch = arguments[1] === undefined ? false : arguments[1];
+      if (this._hasSynced && !forceFetch) {
         return Promise.resolve(this.records);
       } else {
-        return Promise.resolve(this.records.fetch()).then(function () {
+        return Promise.resolve(this.records.fetch(options)).then(function () {
           return _this.records;
         });
       }
@@ -108,7 +116,7 @@
      * @returns {Promise} - A promise that will resolve to the added model.
      */
     insert: function insert(model) {
-      model = this.records.add(model);
+      model = this.records.add(model, { merge: true });
       return Promise.resolve(model);
     },
 
