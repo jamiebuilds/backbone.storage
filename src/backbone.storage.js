@@ -155,7 +155,7 @@ var Storage = Backbone.Storage = Metal.Class.extend({
     } else if (typeof model === 'object') {
       return new this.model(model);
     } else {
-      return new this.model({ id: model });
+      return new this.model({ [this.model.prototype.idAttribute]: model });
     }
   }
 });
